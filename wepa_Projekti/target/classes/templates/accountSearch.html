@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="fragments/layout :: head('Account search')">
+        <title>Account search</title>
+    </head>
+
+    <body class='container'>
+        
+        <nav th:replace="fragments/layout :: nav"/>
+        <p></p>
+        <h4>Search for user name</h4>
+        <form th:action='@{/accounts}' method='POST'>
+            <div class='form-group'>
+                <input type='text' class='form-control' name='searchString' id='searchString'/>
+            </div>
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+        <p></p>
+        <th:block th:if="${searchResult}">
+            <h4>Search results</h4>
+            <table class="table" th:if="${searchResult}">
+                <tr>
+                    <th scope="col">Username</th>
+                    <th scope="col">Full name</th>
+                </tr>
+                <th:block th:each="account : ${searchResult}">
+                    <tr>
+                        <td><a th:href="@{'/accounts/'+${account.urlString}}" th:text="${account.username}">username</a></td>
+                        <td th:text="${account.name}">full name</td>
+                    </tr>
+                </th:block>
+            </table>
+        </th:block>
+    </body>
+</html>

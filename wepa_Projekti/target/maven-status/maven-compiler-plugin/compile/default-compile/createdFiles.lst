@@ -1,0 +1,12 @@
+projekti/SecurityConfiguration.class
+projekti/model/Image.class
+projekti/DefaultController.class
+projekti/controller/AccountController.class
+projekti/CustomUserDetailsService.class
+projekti/controller/RegistrationController.class
+projekti/MyApplication.class
+projekti/model/AccountRepository.class
+projekti/model/Account.class
+projekti/model/MessageRepository.class
+projekti/model/Message.class
+projekti/model/ImageRepository.class

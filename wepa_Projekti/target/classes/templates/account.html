@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="fragments/layout :: head('Home page of ${account.username}')">
+        <title>Home page</title>
+    </head>
+
+    <body class='container'>
+        <nav th:replace="fragments/layout :: nav"/>
+
+        <div class="jumbotron">
+            <h1>Home page of <span th:text="${account.username}"/></h1>
+        </div>
+
+        <table class="table">
+            <tr>
+                <td>User name</td>
+                <td th:text="${account.username}"></td>
+            </tr>
+            <tr>
+                <td>Full name</td>
+                <td th:text="${account.name}"></td>
+            </tr>
+        </table>    
+    
+        <button type="btn btn-primary" value="">Follow</button>    
+    </body>    
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head th:fragment="head(title)" lang="en">
+        <meta charset="UTF-8" />
+        <title th:text="${title}">Otsikko</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"/>
+    </head>
+    <body>
+        <nav th:fragment="nav" class="navbar navbar-toggleable-md navbar-dark bg-dark navbar-expand-lg">
+            <a class="navbar-brand" href="/">OldSchoolTwitter</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                  <li class="nav-item">
+                    <a class="nav-link" th:href="@{/}">Home <span class="sr-only">(current)</span></a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" th:href="@{/accounts}">Search users</a>
+                  </li>
+                </ul>
+                <th:block sec:authorize="!isAuthenticated()">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="register">Register</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="login">Login</a>
+                        </li>
+                    </ul>
+                </th:block>
+                <th:block sec:authorize="isAuthenticated()">
+                    <span class="nav-text text-light">Logged in as <span th:text="${#authentication.getPrincipal().getUsername()}">username</span></span>
+
+                    <div class="navbar-nav">
+                        <a class="nav-link" th:href="logout">Logout</a>
+                    </div>
+                </th:block>
+            </div>
+        </nav>
+
+        
+        <div>TODO write content</div>
+    </body>
+</html>
