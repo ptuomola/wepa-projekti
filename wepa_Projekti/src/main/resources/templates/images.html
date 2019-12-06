@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="fragments/layout :: head('Image gallery')">
+        <title>Image gallery</title>
+    </head>
+
+    <body class='container'>
+        
+        <nav th:replace="fragments/layout :: nav"/>
+        
+        <p></p>
+        <h5>Upload new images</h5>
+        
+        <form th:action="@{/images}" method="POST" enctype="multipart/form-data">
+            <th:block th:if="${uploadError} != null">
+                <div class="alert alert-danger" th:text="${uploadError}"/>
+            </th:block>
+            <div class='form-row'>
+                <div class="col">
+                    <input type="file" class="form-control-file" id="file" name="file">
+                </div>
+                <div class="col">
+                    <input type="string" class="form-control" placeholder="Description" name="description"/> 
+                </div>
+                <div class="col">
+                    <input class="btn btn-primary" type="submit" value="Upload"/>
+                </div>
+            </div>
+        </form>
+        <p></p>
+        <hr>
+        <h4>My image gallery (<span th:text="${count}">count</span> images)</h4>
+        
+        <th:block th:each="image : ${images}"
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="thumbnail">
+                       <img style="width:100%" th:src="@{/images/{id}/content(id=${image.id})}"/>
+                       <p></p>
+                    </div>
+                </div>
+                       <div class="row"> 
+                           <div class="col-sm-6">
+                                Description: <span th:text="${image.description}"/></p>
+                            </div>
+                            <div class="col-sm-2">
+                                <form class="form-inline" th:action="@{/images/{id}/delete(id=${image.id})}" method="POST">
+                                    <input class="btn btn-danger" type="submit" value="Delete"/>
+                                </form>
+                            </div>
+                            <div class="col-sm-2">
+                                 <form  class="form-inline" th:action="@{/images/{id}/toggleProfileImage(id=${image.id})}" method="POST">
+                                     <th:block th:if="${image} == ${profileImage}">
+                                         <input class="btn btn-primary" type="submit" value="Unset as profile image"/>
+                                     </th:block>
+                                     <th:block th:if="${image} != ${profileImage}">
+                                         <input class="btn btn-outline-primary" type="submit" value="Set as profile image"/>
+                                     </th:block>
+                                 </form>
+                           </div>
+                        </div>
+                        <p/>
+                        <hr>
+                    </div>
+                </div>
+            </div>
+        </th:block>
+        
+        <footer th:replace="fragments/layout :: footer"/>
+    </body>
+</html>

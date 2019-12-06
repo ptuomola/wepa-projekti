@@ -5,11 +5,14 @@
  */
 package projekti.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -47,4 +50,7 @@ public class Account extends AbstractPersistable<Long> {
     @Pattern(regexp="[a-zA-Z0-9.-]+", message="The URL string contains illegal characters")
     @Size(min = 3, max = 30)
     private String urlString;
+   
+    @OneToOne
+    Image profileImage;
 }

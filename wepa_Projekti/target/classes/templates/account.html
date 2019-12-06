@@ -10,6 +10,10 @@
         <div class="jumbotron">
             <h1>Home page of <span th:text="${account.username}"/></h1>
         </div>
+        
+        <th:block th:if="${account.profileImage} != null">
+            <img style="width:100%" th:src="@{/images/{id}/content(id=${account.profileImage.id})}"/>
+        </th:block>
 
         <table class="table">
             <tr>
@@ -20,8 +24,17 @@
                 <td>Full name</td>
                 <td th:text="${account.name}"></td>
             </tr>
-        </table>    
-    
-        <button type="btn btn-primary" value="">Follow</button>    
+        </table>
+        <form  class="form-inline" th:action="@{/accounts/{id}/toggleFollowing(id=${account.id})}" method="POST">
+            <th:block th:if="${follower} == null">
+                <input class="btn btn-primary" type="submit" value="Start following"/>
+            </th:block>
+            <th:block th:if="${follower} != null">
+                Following user since  <span th:text="${follower.createdOn}"/> <input class="btn btn-outline-primary" type="submit" value="Stop following"/>  
+            </th:block>
+        </form>
+
+       <footer th:replace="fragments/layout :: footer"/>
+ 
     </body>    
 </html>
