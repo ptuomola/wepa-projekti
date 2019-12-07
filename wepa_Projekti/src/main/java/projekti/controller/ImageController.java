@@ -6,7 +6,10 @@
 package projekti.controller;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -24,8 +27,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import projekti.model.Account;
 import projekti.model.AccountRepository;
+import projekti.model.Comment;
+import projekti.model.CommentRepository;
 import projekti.model.Image;
 import projekti.model.ImageRepository;
+import projekti.model.Like;
+import projekti.model.LikeRepository;
+import projekti.model.Message;
 
 /**
  *
@@ -40,6 +48,12 @@ public class ImageController {
     
     @Autowired
     private AccountRepository accountRepository;
+    
+    @Autowired
+    private LikeRepository lr;    
+    
+    @Autowired
+    private CommentRepository cr; 
     
     @PostMapping("/images")
     public String saveImage(Model model, @RequestParam String description, @RequestParam("file") MultipartFile file) throws IOException {
@@ -168,6 +182,85 @@ public class ImageController {
         headers.setContentLength(image.getSize());
 
         return new ResponseEntity<>(image.getContent(), headers, HttpStatus.CREATED);
+    }
+
+    @Transactional
+    @PostMapping("/images/{id}/toggleLiking")
+    public String toggleLike(@PathVariable Long id, HttpServletRequest request)
+    {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        
+        if(auth == null)
+        {
+            String referer = request.getHeader("Referer");
+            return "redirect:"+ referer;
+        }
+        
+        String username = auth.getName();        
+        Account user = accountRepository.findByUsernameIgnoreCase(username);
+       
+        Image image = imageRepository.getOne(id);
+        
+        if(user == null || image == null)
+        {
+            String referer = request.getHeader("Referer");
+            return "redirect:"+ referer;
+        }
+        
+       
+        Like like = lr.findByLikedImageAndLikingAccount(image, user);
+
+        if(like != null)
+        {
+            lr.delete(like);
+            image.setNumLikes(image.getNumLikes() - 1);
+            imageRepository.save(image);
+        }
+        else
+        {
+            like = new Like();
+            like.setLikedImage(image);
+            like.setLikingAccount(user);
+            lr.save(like);
+            image.setNumLikes(image.getNumLikes() + 1);
+            imageRepository.save(image);
+        }
+
+        String referer = request.getHeader("Referer");
+        return "redirect:"+ referer;
+    }
+
+    @PostMapping("/images/{id}/comment")
+    public String postImageComment(@PathVariable Long id, @RequestParam String commentText, HttpServletRequest request)
+    {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        
+        if(auth == null)
+        {
+            String referer = request.getHeader("Referer");
+            return "redirect:"+ referer;
+        }
+        
+        String username = auth.getName();        
+        Account user = accountRepository.findByUsernameIgnoreCase(username);
+       
+        Image image = imageRepository.getOne(id);
+        
+        if(user == null || image == null)
+        {
+            String referer = request.getHeader("Referer");
+            return "redirect:"+ referer;
+        } 
+        
+        Comment comment = new Comment();
+        comment.setCommentedImage(image);
+        comment.setCommentText(commentText);
+        comment.setCommentTime(new Date());
+        comment.setCommentingAccount(user);
+        cr.save(comment);
+
+        String referer = request.getHeader("Referer");
+        return "redirect:"+ referer;
     }
     
 }

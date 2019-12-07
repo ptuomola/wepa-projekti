@@ -1,11 +1,15 @@
 /Users/ptuomola/NetBeansProjects/mooc-wepa-s19-projekti/wepa_Projekti/src/main/java/projekti/MyApplication.java
+/Users/ptuomola/NetBeansProjects/mooc-wepa-s19-projekti/wepa_Projekti/src/main/java/projekti/model/Comment.java
 /Users/ptuomola/NetBeansProjects/mooc-wepa-s19-projekti/wepa_Projekti/src/main/java/projekti/controller/AccountController.java
+/Users/ptuomola/NetBeansProjects/mooc-wepa-s19-projekti/wepa_Projekti/src/main/java/projekti/controller/MessageController.java
+/Users/ptuomola/NetBeansProjects/mooc-wepa-s19-projekti/wepa_Projekti/src/main/java/projekti/model/Like.java
 /Users/ptuomola/NetBeansProjects/mooc-wepa-s19-projekti/wepa_Projekti/src/main/java/projekti/model/MessageRepository.java
 /Users/ptuomola/NetBeansProjects/mooc-wepa-s19-projekti/wepa_Projekti/src/main/java/projekti/model/AccountRepository.java
 /Users/ptuomola/NetBeansProjects/mooc-wepa-s19-projekti/wepa_Projekti/src/main/java/projekti/controller/ImageController.java
 /Users/ptuomola/NetBeansProjects/mooc-wepa-s19-projekti/wepa_Projekti/src/main/java/projekti/controller/RegistrationController.java
 /Users/ptuomola/NetBeansProjects/mooc-wepa-s19-projekti/wepa_Projekti/src/main/java/projekti/DefaultController.java
 /Users/ptuomola/NetBeansProjects/mooc-wepa-s19-projekti/wepa_Projekti/src/main/java/projekti/CustomUserDetailsService.java
+/Users/ptuomola/NetBeansProjects/mooc-wepa-s19-projekti/wepa_Projekti/src/main/java/projekti/model/LikeRepository.java
 /Users/ptuomola/NetBeansProjects/mooc-wepa-s19-projekti/wepa_Projekti/src/main/java/projekti/SecurityConfiguration.java
 /Users/ptuomola/NetBeansProjects/mooc-wepa-s19-projekti/wepa_Projekti/src/main/java/projekti/model/Follower.java
 /Users/ptuomola/NetBeansProjects/mooc-wepa-s19-projekti/wepa_Projekti/src/main/java/projekti/controller/LoginController.java
@@ -15,3 +19,4 @@
 /Users/ptuomola/NetBeansProjects/mooc-wepa-s19-projekti/wepa_Projekti/src/main/java/projekti/model/FollowerRepository.java
 /Users/ptuomola/NetBeansProjects/mooc-wepa-s19-projekti/wepa_Projekti/src/main/java/projekti/controller/FollowerController.java
 /Users/ptuomola/NetBeansProjects/mooc-wepa-s19-projekti/wepa_Projekti/src/main/java/projekti/model/ImageRepository.java
+/Users/ptuomola/NetBeansProjects/mooc-wepa-s19-projekti/wepa_Projekti/src/main/java/projekti/model/CommentRepository.java

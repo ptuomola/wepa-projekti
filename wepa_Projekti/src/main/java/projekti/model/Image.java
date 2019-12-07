@@ -7,6 +7,7 @@ package projekti.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -14,8 +15,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.springframework.data.jpa.domain.AbstractPersistable;
@@ -43,6 +46,12 @@ public class Image extends AbstractPersistable<Long> {
     
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "account_id", nullable = false)
-    @JsonIgnore
+    @EqualsAndHashCode.Exclude 
     private Account owner; 
+    
+    private int numLikes;
+    
+    @OneToMany(mappedBy = "commentedImage")
+    @EqualsAndHashCode.Exclude 
+    Set<Comment> comments; 
 }

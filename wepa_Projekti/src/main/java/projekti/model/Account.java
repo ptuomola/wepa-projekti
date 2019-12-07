@@ -18,6 +18,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
@@ -52,5 +53,6 @@ public class Account extends AbstractPersistable<Long> {
     private String urlString;
    
     @OneToOne
+    @EqualsAndHashCode.Exclude 
     Image profileImage;
 }

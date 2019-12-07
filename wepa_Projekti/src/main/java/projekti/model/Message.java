@@ -8,10 +8,13 @@ package projekti.model;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
@@ -26,10 +29,14 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 @Entity
 public class Message extends AbstractPersistable<Long> {
     
-    @ManyToOne
-    private Account account;
-
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "sender_id", nullable = false)
+    @EqualsAndHashCode.Exclude 
+    private Account sender;
+    
     private Date sentTime;
     
     private String messageText;
+    
+    private int numLikes;
 }

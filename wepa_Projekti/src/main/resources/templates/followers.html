@@ -13,12 +13,24 @@
             <tr>
                 <th scope="col">Username</th>
                 <th scope="col">Full name</th>
+                <th scope="col">Following since</th>
+                <th scope="col">Actions</th>
             </tr>
             <th:block th:each="follower : ${following}">
                 <tr>
                     <td><a th:href="@{'/accounts/'+${follower.followedAccount.urlString}}" th:text="${follower.followedAccount.username}">username</a></td>
                     <td th:text="${follower.followedAccount.name}">full name</td>
-                    <td><button>Block</button></td>
+                    <td th:text="${#dates.format(follower.createdOn, 'dd-MM-yyyy HH:mm')}"/>
+                    <td>
+                        <div class="row">
+                            <form  class="form-inline" th:action="@{/accounts/{id}/toggleFollowing(id=${follower.followedAccount.id})}" method="POST">
+                                <input class="btn btn-primary" type="submit" value="Stop following"/>
+                            </form>
+                            <form  class="form-inline" th:action="@{/accounts/{id}/toggleBlock(id=${follower.followedAccount.id})}" method="POST">
+                                <input class="btn btn-danger" type="submit" value="Block"/>
+                            </form>
+                        </div>
+                    </td>
                 </tr>
             </th:block>
         </table>
@@ -29,13 +41,26 @@
             <tr>
                 <th scope="col">Username</th>
                 <th scope="col">Full name</th>
+                <th scope="col">Following since</th>
+                <th scope="col">Actions</th>
             </tr>
             <th:block th:each="follower : ${followers}">
                 <tr>
                     <td><a th:href="@{'/accounts/'+${follower.followingAccount.urlString}}" th:text="${follower.followingAccount.username}">username</a></td>
                     <td th:text="${follower.followingAccount.name}">full name</td>
-                    <td><button>Block</button></td>
+                    <td th:text="${#dates.format(follower.createdOn, 'dd-MM-yyyy HH:mm')}"/>
+                    <td>
+                        <div class="row">
+                            <form  class="form-inline" th:action="@{/accounts/{id}/toggleFollowing(id=${follower.followingAccount.id})}" method="POST">
+                                <input class="btn btn-outline-primary" type="submit" value="Start following"/>
+                            </form>
+                            <form  class="form-inline" th:action="@{/account/{id}/toggleBlock(id=${follower.followingAccount.id})}" method="POST">
+                                <input class="btn btn-danger" type="submit" value="Block"/>
+                            </form>
+                        </div>
+                    </td>
                 </tr>
+                
             </th:block>
         </table>
  

@@ -10,6 +10,9 @@
             <h1>Old School Twitter</h1>
         </div>
         
+        <p><a th:href="@{/register}">Register</a> as new user or <a th:href="@{/login}">login</a> if you already have an account</p>
+        <p>As a guest, you can also <a th:href="@{/accounts}">search</a> our users and view their walls</p>
+        
         <footer th:replace="fragments/layout :: footer"/>
     </body>
 </html>

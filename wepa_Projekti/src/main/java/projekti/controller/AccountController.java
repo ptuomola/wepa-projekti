@@ -7,6 +7,7 @@ package projekti.controller;
 
 import java.util.Date;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -24,6 +25,7 @@ import projekti.model.Account;
 import projekti.model.AccountRepository;
 import projekti.model.Follower;
 import projekti.model.FollowerRepository;
+import projekti.model.MessageRepository;
 
 /**
  *
@@ -38,6 +40,28 @@ public class AccountController {
     
     @Autowired
     private FollowerRepository fr;
+    
+    @Autowired
+    private MessageRepository mr;
+    
+    @GetMapping("/")
+    public String mainPage()
+    {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        
+        if(auth != null)
+        {
+            String username = auth.getName();        
+            Account user = ar.findByUsernameIgnoreCase(username);
+            
+            if(user != null)
+            {
+                return "redirect:/accounts/" + user.getUrlString();
+            }
+        }
+        
+        return "index";
+    }
     
     @GetMapping("/accounts/{urlSuffix}")
     public String getAccountPage(@PathVariable String urlSuffix, Model model)
@@ -55,7 +79,14 @@ public class AccountController {
             Account user = ar.findByUsernameIgnoreCase(username);
             
             model.addAttribute("follower", fr.getByFollowingAccountAndFollowedAccount(user, account));
+            
+            if(user == account)
+            {
+                model.addAttribute("myHomePage", true);
+            }
         }
+        
+        model.addAttribute("messages", mr.getMessagesForDisplay(account));
         
         return "account";
     }
@@ -74,25 +105,27 @@ public class AccountController {
     }
     
     @PostMapping("/accounts/{id}/toggleFollowing")
-    public String toggleFollowing(@PathVariable Long id, Model model)
+    public String toggleFollowing(@PathVariable Long id, Model model, HttpServletRequest request)
     {
-        Account account = ar.findById(id).get();
+        Account followedAccount = ar.findById(id).get();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         
-        if(auth == null || account == null)
+        if(auth == null || followedAccount == null)
         {
-            return "account";
+            String referer = request.getHeader("Referer");
+            return "redirect:"+ referer;
         }
         
         String username = auth.getName();        
-        Account user = ar.findByUsernameIgnoreCase(username);
+        Account followingAccount = ar.findByUsernameIgnoreCase(username);
         
-        if(user == null)
+        if(followingAccount == null)
         {
-            return "account";
+            String referer = request.getHeader("Referer");
+            return "redirect:"+ referer;
         }
         
-        Follower follower = fr.getByFollowingAccountAndFollowedAccount(user, account);
+        Follower follower = fr.getByFollowingAccountAndFollowedAccount(followingAccount, followedAccount);
 
         if(follower != null)
         {
@@ -101,10 +134,14 @@ public class AccountController {
         }
         else
         {
-            follower = new Follower(account, user, new Date());
+            follower = new Follower();
+            follower.setFollowedAccount(followedAccount);
+            follower.setFollowingAccount(followingAccount);
+            follower.setCreatedOn(new Date());
             fr.save(follower);
         }
         
-        return "redirect:/accounts/" + account.getUrlString();
+        String referer = request.getHeader("Referer");
+        return "redirect:"+ referer;
     }
 }

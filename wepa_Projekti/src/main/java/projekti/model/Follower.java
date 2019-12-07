@@ -14,6 +14,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
@@ -33,10 +34,12 @@ public class Follower extends AbstractPersistable<Long>
 {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "followed_id", nullable = false)
+    @EqualsAndHashCode.Exclude 
     private Account followedAccount;
     
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "following_id", nullable = false)
+    @EqualsAndHashCode.Exclude 
     private Account followingAccount;
     
     private Date createdOn;

@@ -1,39 +1,70 @@
 <!DOCTYPE HTML>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-    <head th:replace="fragments/layout :: head('Home page of ${account.username}')">
-        <title>Home page</title>
+    <head th:replace="fragments/layout :: head(pageTitle=${account.username})">
+        <title>Wall</title>
     </head>
 
     <body class='container'>
         <nav th:replace="fragments/layout :: nav"/>
-
+       
         <div class="jumbotron">
-            <h1>Home page of <span th:text="${account.username}"/></h1>
+            <h1 class="display-4">Wall of <span th:text="${account.username}"/></h1>
+            <p class="lead" th:text="${account.name}"/>
         </div>
         
         <th:block th:if="${account.profileImage} != null">
             <img style="width:100%" th:src="@{/images/{id}/content(id=${account.profileImage.id})}"/>
         </th:block>
+        
+        <p></p>
 
-        <table class="table">
-            <tr>
-                <td>User name</td>
-                <td th:text="${account.username}"></td>
-            </tr>
-            <tr>
-                <td>Full name</td>
-                <td th:text="${account.name}"></td>
-            </tr>
-        </table>
-        <form  class="form-inline" th:action="@{/accounts/{id}/toggleFollowing(id=${account.id})}" method="POST">
-            <th:block th:if="${follower} == null">
-                <input class="btn btn-primary" type="submit" value="Start following"/>
-            </th:block>
-            <th:block th:if="${follower} != null">
-                Following user since  <span th:text="${follower.createdOn}"/> <input class="btn btn-outline-primary" type="submit" value="Stop following"/>  
-            </th:block>
-        </form>
-
+        <th:block th:if="${myHomePage} != true">
+            <form  class="form-inline" th:action="@{/accounts/{id}/toggleFollowing(id=${account.id})}" method="POST">
+                <th:block th:if="${follower} == null">
+                    <input class="btn btn-primary" type="submit" value="Start following"/>
+                </th:block>
+                <th:block th:if="${follower} != null">
+                    Following user since &nbsp; <span th:text="${#dates.format(follower.createdOn, 'dd-MM-yyyy HH:mm')}"/>
+                    &nbsp;&nbsp;&nbsp;<input class="btn btn-outline-primary" type="submit" value="Stop following"/>
+                </th:block>
+            </form>
+        </th:block>
+        
+        <div>
+            <h5 th:if="${myHomePage} == true">
+                Your wall
+            </h5>
+            <h5 th:if="${myHomePage} != true">
+                <span th:text="${account.username}"/>'s wall
+            </h5>
+            
+            <div th:each="message : ${messages}">
+                <span th:text="${#dates.format(message.sentTime, 'dd-MM-yyyy HH:mm')}">sentTime</span> 
+                <span th:text="${message.sender.username}">sender</span> (<span th:text="${message.sender.name}"></span>):
+                <span th:text="${message.messageText}">messageText</span>
+                Likes: <span th:text="${message.numLikes}">numLikes</span>
+                
+                <form th:action="@{/messages/{id}/toggleLiking(id=${message.id})}" method="POST">
+                    <div class="text-right">
+                        <input class="btn btn-primary" type="submit" value="Like"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <p></p>
+        <div th:if="${myHomePage} == true">
+            <h5>Post a message on your wall</h5>
+        
+            <form th:action="@{/messages}" method="POST">
+                <div class="form-group">
+                    <textarea class="form-control" id="messageText" name="messageText" placeholder="Message text" rows="3"></textarea> 
+                </div>
+                <div class="text-right">
+                    <input class="btn btn-primary" type="submit" value="Post"/>
+                </div>
+            </form>
+        </div>
+        
        <footer th:replace="fragments/layout :: footer"/>
  
     </body>    
