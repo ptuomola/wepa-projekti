@@ -24,8 +24,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import projekti.model.Account;
 import projekti.model.AccountRepository;
+import projekti.model.Comment;
+import projekti.model.CommentRepository;
 import projekti.model.Follower;
 import projekti.model.FollowerRepository;
+import projekti.model.Image;
 import projekti.model.Like;
 import projekti.model.LikeRepository;
 import projekti.model.Message;
@@ -48,6 +51,9 @@ public class MessageController {
     @Autowired
     private LikeRepository lr;
     
+    @Autowired
+    private CommentRepository cr;
+            
     @PostMapping("/messages")
     public String postMessage(@RequestParam String messageText, HttpServletRequest request)
     {
@@ -121,6 +127,39 @@ public class MessageController {
             message.setNumLikes(message.getNumLikes() + 1);
             mr.save(message);
         }
+
+        String referer = request.getHeader("Referer");
+        return "redirect:"+ referer;
+    }
+    
+    @PostMapping("/messages/{id}/comment")
+    public String postMessageComment(@PathVariable Long id, @RequestParam String commentText, HttpServletRequest request)
+    {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        
+        if(auth == null)
+        {
+            String referer = request.getHeader("Referer");
+            return "redirect:"+ referer;
+        }
+        
+        String username = auth.getName();        
+        Account user = ar.findByUsernameIgnoreCase(username);
+       
+        Message message = mr.getOne(id);
+        
+        if(user == null || message == null)
+        {
+            String referer = request.getHeader("Referer");
+            return "redirect:"+ referer;
+        } 
+        
+        Comment comment = new Comment();
+        comment.setCommentedMessage(message);
+        comment.setCommentText(commentText);
+        comment.setCommentTime(new Date());
+        comment.setCommentingAccount(user);
+        cr.save(comment);
 
         String referer = request.getHeader("Referer");
         return "redirect:"+ referer;

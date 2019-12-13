@@ -1,0 +1,49 @@
+body {
+            background-color: #eeeeee;
+}
+
+.h7 {
+    font-size: 0.8rem;
+}
+
+.gedf-wrapper {
+    margin-top: 0.97rem;
+}
+
+@media (min-width: 992px) {
+    .gedf-main {
+        padding-left: 4rem;
+        padding-right: 4rem;
+    }
+    .gedf-card {
+        margin-bottom: 2.77rem;
+    }
+}
+
+/**Reset Bootstrap*/
+.dropdown-toggle::after {
+    content: none;
+    display: none;
+}
+
+.speech-bubble {
+	position: relative;
+	background: #D5F0FF;
+	border-radius: .4em;
+        padding: 10px;
+}
+
+.speech-bubble:after {
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 24%;
+	width: 0;
+	height: 0;
+	border: 0.688em solid transparent;
+	border-right-color: #D5F0FF;
+	border-left: 0;
+	border-top: 0;
+	margin-top: -0.344em;
+	margin-left: -0.687em;
+}  

@@ -77,7 +77,8 @@ public class AccountController {
         {
             String username = auth.getName();        
             Account user = ar.findByUsernameIgnoreCase(username);
-            
+
+            model.addAttribute("loggedInUser", user);
             model.addAttribute("follower", fr.getByFollowingAccountAndFollowedAccount(user, account));
             
             if(user == account)
@@ -85,6 +86,9 @@ public class AccountController {
                 model.addAttribute("myHomePage", true);
             }
         }
+        
+        model.addAttribute("numFollowers", fr.countByFollowedAccount(account));        
+        model.addAttribute("numFollowing", fr.countByFollowingAccount(account));
         
         model.addAttribute("messages", mr.getMessagesForDisplay(account));
         

@@ -23,4 +23,8 @@ public interface FollowerRepository extends JpaRepository<Follower, Long>
     
     @EntityGraph(attributePaths = {"followedAccount"})
     public List<Follower>  findByFollowingAccount(Account account);
+    
+        
+    public Long countByFollowingAccount(Account account);
+    public Long countByFollowedAccount(Account account);
 }

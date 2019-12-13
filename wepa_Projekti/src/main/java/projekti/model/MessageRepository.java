@@ -15,7 +15,7 @@ import org.springframework.data.jpa.repository.Query;
  */
 public interface MessageRepository extends JpaRepository<Message, Long> {
    
-    @Query(value = "SELECT * FROM MESSAGE WHERE SENDER_ID = 1 OR SENDER_ID IN (SELECT FOLLOWED_ID FROM FOLLOWER WHERE FOLLOWING_ID = 1)  ORDER BY SENT_TIME DESC LIMIT 25",
+    @Query(value = "SELECT * FROM MESSAGE WHERE SENDER_ID = ?1 OR SENDER_ID IN (SELECT FOLLOWED_ID FROM FOLLOWER WHERE FOLLOWING_ID = ?1)  ORDER BY SENT_TIME DESC LIMIT 25",
             nativeQuery = true)
     List<Message> getMessagesForDisplay(Account account);
     
