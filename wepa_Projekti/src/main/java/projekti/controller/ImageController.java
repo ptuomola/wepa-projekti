@@ -113,6 +113,7 @@ public class ImageController {
         return "redirect:/images";
     }
     
+    @Transactional
     @PostMapping("/images/{id}/toggleProfileImage")
     public String setProfileImage(@PathVariable Long id)
     {
@@ -158,6 +159,7 @@ public class ImageController {
     }
         
     @GetMapping("/images")
+    @Transactional
     public String getImages(Model model)
     {
         Account owner = as.getLoggedInAccount();
@@ -170,6 +172,7 @@ public class ImageController {
     }
     
     @GetMapping("/images/{id}/content")
+    @Transactional
     public ResponseEntity<byte[]> getImage(@PathVariable Long id)
     {
         Account owner = as.getLoggedInAccount();
@@ -205,6 +208,7 @@ public class ImageController {
         return "redirect:"+ referer;
     }
 
+    @Transactional
     @PostMapping("/images/{id}/comment")
     public String postImageComment(@PathVariable Long id, @RequestParam String commentText, HttpServletRequest request)
     {
