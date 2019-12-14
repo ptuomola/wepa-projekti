@@ -65,6 +65,6 @@ public class RegistrationController {
         account.setPassword(passwordEncoder.encode(account.getPassword()));
         ar.save(account);
         
-        return "redirect:/";
+        return "redirect:/login?newUser=true";
     }
 }

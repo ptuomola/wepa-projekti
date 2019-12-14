@@ -34,6 +34,8 @@ import projekti.model.ImageRepository;
 import projekti.model.Like;
 import projekti.model.LikeRepository;
 import projekti.model.Message;
+import projekti.services.AccountService;
+import projekti.services.LikeService;
 
 /**
  *
@@ -55,14 +57,18 @@ public class ImageController {
     @Autowired
     private CommentRepository cr; 
     
+    @Autowired
+    private AccountService as;
+
+    @Autowired
+    private LikeService ls;
+    
+    
     @PostMapping("/images")
     public String saveImage(Model model, @RequestParam String description, @RequestParam("file") MultipartFile file) throws IOException {
         String uploadError = null;
         
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
-        
-        Account owner = accountRepository.findByUsernameIgnoreCase(username);
+        Account owner = as.getLoggedInAccount();
         
         if(description == null || description.equals(""))
         {
@@ -110,11 +116,7 @@ public class ImageController {
     @PostMapping("/images/{id}/toggleProfileImage")
     public String setProfileImage(@PathVariable Long id)
     {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
-        
-        Account owner = accountRepository.findByUsernameIgnoreCase(username);
-        
+        Account owner = as.getLoggedInAccount();
         Image image = imageRepository.getOne(id);
         
         if(!image.getOwner().equals(owner))
@@ -130,19 +132,27 @@ public class ImageController {
         return "redirect:/images";        
     }
     
+    @Transactional
     @PostMapping("/images/{id}/delete")
     public String deleteImage(@PathVariable Long id)
     {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
-        
-        Account owner = accountRepository.findByUsernameIgnoreCase(username);
-        
+        Account owner = as.getLoggedInAccount();
         Image image = imageRepository.getOne(id);
         
         if(!image.getOwner().equals(owner))
             return "redirect:/images";
-            
+
+        if(image.equals(owner.getProfileImage()))
+        {
+            owner.setProfileImage(null);
+            accountRepository.save(owner);
+        }
+
+        if(image.getNumLikes() > 0)
+        {
+            lr.deleteByLikedImage(image);
+        }
+        
         imageRepository.deleteById(id);
         return "redirect:/images";
     }
@@ -150,11 +160,7 @@ public class ImageController {
     @GetMapping("/images")
     public String getImages(Model model)
     {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
-        
-        Account owner = accountRepository.findByUsernameIgnoreCase(username);
-        
+        Account owner = as.getLoggedInAccount();
         List<Image> images = imageRepository.findByOwnerOrderByIdAsc(owner);
         model.addAttribute("count", images.size());
         model.addAttribute("images", images);
@@ -166,11 +172,7 @@ public class ImageController {
     @GetMapping("/images/{id}/content")
     public ResponseEntity<byte[]> getImage(@PathVariable Long id)
     {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
-        
-        Account owner = accountRepository.findByUsernameIgnoreCase(username);
-        
+        Account owner = as.getLoggedInAccount();
         Image image = imageRepository.getOne(id);
         
         if(!image.getOwner().equals(owner) && image.getOwner().getProfileImage() != image)
@@ -188,17 +190,7 @@ public class ImageController {
     @PostMapping("/images/{id}/toggleLiking")
     public String toggleLike(@PathVariable Long id, HttpServletRequest request)
     {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        
-        if(auth == null)
-        {
-            String referer = request.getHeader("Referer");
-            return "redirect:"+ referer;
-        }
-        
-        String username = auth.getName();        
-        Account user = accountRepository.findByUsernameIgnoreCase(username);
-       
+        Account user = as.getLoggedInAccount();
         Image image = imageRepository.getOne(id);
         
         if(user == null || image == null)
@@ -207,24 +199,7 @@ public class ImageController {
             return "redirect:"+ referer;
         }
         
-       
-        Like like = lr.findByLikedImageAndLikingAccount(image, user);
-
-        if(like != null)
-        {
-            lr.delete(like);
-            image.setNumLikes(image.getNumLikes() - 1);
-            imageRepository.save(image);
-        }
-        else
-        {
-            like = new Like();
-            like.setLikedImage(image);
-            like.setLikingAccount(user);
-            lr.save(like);
-            image.setNumLikes(image.getNumLikes() + 1);
-            imageRepository.save(image);
-        }
+        ls.toggleLike(image, user);
 
         String referer = request.getHeader("Referer");
         return "redirect:"+ referer;
@@ -233,17 +208,7 @@ public class ImageController {
     @PostMapping("/images/{id}/comment")
     public String postImageComment(@PathVariable Long id, @RequestParam String commentText, HttpServletRequest request)
     {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        
-        if(auth == null)
-        {
-            String referer = request.getHeader("Referer");
-            return "redirect:"+ referer;
-        }
-        
-        String username = auth.getName();        
-        Account user = accountRepository.findByUsernameIgnoreCase(username);
-       
+        Account user = as.getLoggedInAccount();
         Image image = imageRepository.getOne(id);
         
         if(user == null || image == null)

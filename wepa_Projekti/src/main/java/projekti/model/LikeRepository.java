@@ -15,4 +15,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface LikeRepository extends JpaRepository<Like, Long> {
     Like findByLikedMessageAndLikingAccount(Message message, Account account);
     Like findByLikedImageAndLikingAccount(Image image, Account account);
+    public Long deleteByLikedImage(Image image);
 }

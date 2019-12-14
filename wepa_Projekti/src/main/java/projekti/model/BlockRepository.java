@@ -12,5 +12,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
  *
  * @author ptuomola
  */
-public interface CommentRepository extends JpaRepository<Comment, Long> {
+public interface BlockRepository extends JpaRepository<Block, Long> {
+    public Block findByBlockedAccount(Account owner);
+    public Block findByBlockingAccount(Account owner);
+
+    public Block findByBlockedAccountAndBlockingAccount(Account blockedUser, Account blockingUser);
 }

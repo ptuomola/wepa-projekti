@@ -36,21 +36,17 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "LIKES")
-public class Like extends AbstractPersistable<Long> {
+public class Block extends AbstractPersistable<Long> {
     
-    @ManyToOne(fetch = FetchType.LAZY, optional = true)
-    @JoinColumn(name = "liked_image_id", nullable = true)
-    @EqualsAndHashCode.Exclude 
-    private Image likedImage;
-    
-    @ManyToOne(fetch = FetchType.LAZY, optional = true)
-    @JoinColumn(name = "liked_message_id", nullable = true)
-    @EqualsAndHashCode.Exclude 
-    private Message likedMessage;
-
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "liking_account_id", nullable = false)
+    @JoinColumn(name = "blocked_account_id", nullable = false)
     @EqualsAndHashCode.Exclude 
-    private Account likingAccount;
+    private Account blockedAccount;
+            
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "blocking_account_id", nullable = false)
+    @EqualsAndHashCode.Exclude 
+    private Account blockingAccount;
+    
+    Date createdOn;
 }

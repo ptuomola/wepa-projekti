@@ -7,7 +7,7 @@
         <nav th:replace="fragments/layout :: nav"/>
         <p></p>
         <h1>Registration page</h1> 
-        <form th:action='@{/register}' th:object='${account}' method='POST'>
+        <form th:action='@{/register}' autocomplete="off" th:object='${account}' method='POST'>
             <div class='form-group'>
                 <label for='username'>Username</label>
                 <input type='text' class='form-control' th:field="*{username}" id='username'/>

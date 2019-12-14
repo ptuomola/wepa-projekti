@@ -27,4 +27,6 @@ public interface FollowerRepository extends JpaRepository<Follower, Long>
         
     public Long countByFollowingAccount(Account account);
     public Long countByFollowedAccount(Account account);
+
+    public void deleteByFollowingAccountAndFollowedAccount(Account followingUser, Account followedUser);
 }

@@ -79,7 +79,7 @@
                             </ul>
                         </div>
                         <div class="card-body">
-                            <form th:action="@{/messages}" method="POST">
+                            <form th:action="@{/messages}" method="POST" autocomplete="off">
                                 <div class="tab-content" id="myTabContent">
                                     <div class="tab-pane fade show active" id="posts" role="tabpanel" aria-labelledby="posts-tab">
                                         <div class="form-group">
@@ -171,7 +171,7 @@
                                 </div>
                             </div>
                             <div class="card-footer">
-                                <form th:action="@{/messages/{id}/comment(id=${message.id})}" method="POST" class="form-inline">
+                                <form th:action="@{/messages/{id}/comment(id=${message.id})}" autocomplete="off" method="POST" class="form-inline">
                                     <div class="form-group">
                                         <th:block th:if="${loggedInUser.profileImage} != null">
                                             <img class="img-circle img-sm" width="30" th:src="@{/images/{id}/content(id=${loggedInUser.profileImage.id})}" alt="">

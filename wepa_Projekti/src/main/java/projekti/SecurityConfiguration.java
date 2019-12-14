@@ -34,18 +34,20 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/h2-console", "/h2-console/**").permitAll()
                 .antMatchers("/register").permitAll()
                 .antMatchers("/").permitAll()
+                .antMatchers("/public/**").permitAll()
+                .antMatchers("/login/**").permitAll()
                 .anyRequest().authenticated();
         
         http.formLogin()
                 .loginPage("/login")
-                .permitAll();
+                .permitAll()
+                .defaultSuccessUrl("/");
         
         http.logout()
                 .clearAuthentication(true)
                 .invalidateHttpSession(true)
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                .deleteCookies("JSESSIONID")
-                .logoutSuccessUrl("/");
+                .deleteCookies("JSESSIONID");
               
     }
 

@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.List;
 import java.util.Set;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -51,7 +52,7 @@ public class Image extends AbstractPersistable<Long> {
     
     private int numLikes;
     
-    @OneToMany(mappedBy = "commentedImage")
+    @OneToMany(mappedBy = "commentedImage", cascade = CascadeType.REMOVE)
     @EqualsAndHashCode.Exclude 
     Set<Comment> comments; 
 }

@@ -18,13 +18,24 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class LoginController {
     
     @GetMapping("/login")
-    public String login(Model model, String error, String logout) {
+    public String login(Model model, String error, String logout, String newUser) {
+        System.out.println("in login, logout is " + logout);
+        
         if (error != null)
             model.addAttribute("errorMsg", "Your username and password are invalid.");
 
         if (logout != null)
             model.addAttribute("msg", "You have been logged out successfully.");
 
+        if (newUser != null)
+            model.addAttribute("msg", "Registration successful. Please log in.");
+
         return "login";
+    }
+    
+    @GetMapping("/logout")
+    public String logout()
+    {
+        return "redirect:/login?logout";
     }
 }

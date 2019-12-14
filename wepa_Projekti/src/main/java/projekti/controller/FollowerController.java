@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import projekti.model.Account;
 import projekti.model.AccountRepository;
+import projekti.model.BlockRepository;
 import projekti.model.FollowerRepository;
 
 /**
@@ -36,7 +37,10 @@ public class FollowerController {
     
     @Autowired
     private AccountRepository ar;
-    
+
+    @Autowired
+    private BlockRepository br;
+
     @GetMapping("/followers")
     public String getFollowers(Model model)
     {
@@ -46,6 +50,9 @@ public class FollowerController {
         Account owner = ar.findByUsernameIgnoreCase(username);        
         model.addAttribute("followers", fr.findByFollowedAccount(owner));
         model.addAttribute("following", fr.findByFollowingAccount(owner));
+        model.addAttribute("blockedBy", br.findByBlockedAccount(owner));
+        model.addAttribute("blocking", br.findByBlockingAccount(owner));
+
         return "followers";
     }
 }

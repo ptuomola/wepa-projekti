@@ -33,6 +33,8 @@ import projekti.model.Like;
 import projekti.model.LikeRepository;
 import projekti.model.Message;
 import projekti.model.MessageRepository;
+import projekti.services.AccountService;
+import projekti.services.LikeService;
 
 /**
  *
@@ -53,21 +55,18 @@ public class MessageController {
     
     @Autowired
     private CommentRepository cr;
-            
+    
+    @Autowired
+    private AccountService as; 
+
+    @Autowired
+    private LikeService ls; 
+    
+    
     @PostMapping("/messages")
     public String postMessage(@RequestParam String messageText, HttpServletRequest request)
     {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        
-        if(auth == null)
-        {
-            String referer = request.getHeader("Referer");
-            return "redirect:"+ referer;
-        }
-        
-        String username = auth.getName();        
-        Account user = ar.findByUsernameIgnoreCase(username);
-        
+        Account user = as.getLoggedInAccount();
         if(user == null)
         {
             String referer = request.getHeader("Referer");
@@ -90,17 +89,7 @@ public class MessageController {
     @PostMapping("/messages/{id}/toggleLiking")
     public String toggleLike(@PathVariable Long id, HttpServletRequest request)
     {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        
-        if(auth == null)
-        {
-            String referer = request.getHeader("Referer");
-            return "redirect:"+ referer;
-        }
-        
-        String username = auth.getName();        
-        Account user = ar.findByUsernameIgnoreCase(username);
-       
+        Account user = as.getLoggedInAccount();
         Message message = mr.getOne(id);
         
         if(user == null || message == null)
@@ -109,25 +98,8 @@ public class MessageController {
             return "redirect:"+ referer;
         }
         
-       
-        Like like = lr.findByLikedMessageAndLikingAccount(message, user);
-
-        if(like != null)
-        {
-            lr.delete(like);
-            message.setNumLikes(message.getNumLikes() - 1);
-            mr.save(message);
-        }
-        else
-        {
-            like = new Like();
-            like.setLikedMessage(message);
-            like.setLikingAccount(user);
-            lr.save(like);
-            message.setNumLikes(message.getNumLikes() + 1);
-            mr.save(message);
-        }
-
+        ls.toggleLike(message, user);
+        
         String referer = request.getHeader("Referer");
         return "redirect:"+ referer;
     }
@@ -135,16 +107,7 @@ public class MessageController {
     @PostMapping("/messages/{id}/comment")
     public String postMessageComment(@PathVariable Long id, @RequestParam String commentText, HttpServletRequest request)
     {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        
-        if(auth == null)
-        {
-            String referer = request.getHeader("Referer");
-            return "redirect:"+ referer;
-        }
-        
-        String username = auth.getName();        
-        Account user = ar.findByUsernameIgnoreCase(username);
+        Account user = as.getLoggedInAccount();
        
         Message message = mr.getOne(id);
         

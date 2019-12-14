@@ -5,27 +5,21 @@
  */
 package projekti.controller;
 
-import java.util.Date;
-import java.util.List;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import projekti.model.Account;
 import projekti.model.AccountRepository;
-import projekti.model.Follower;
 import projekti.model.FollowerRepository;
 import projekti.model.MessageRepository;
+import projekti.services.AccountService;
+import projekti.services.BlockService;
+import projekti.services.FollowerService;
 
 /**
  *
@@ -44,20 +38,23 @@ public class AccountController {
     @Autowired
     private MessageRepository mr;
     
+    @Autowired
+    private AccountService as;
+    
+    @Autowired 
+    private FollowerService fs;
+    
+    @Autowired 
+    private BlockService bs;
+    
     @GetMapping("/")
     public String mainPage()
     {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        
-        if(auth != null)
+        Account user = as.getLoggedInAccount();
+
+        if(user != null)
         {
-            String username = auth.getName();        
-            Account user = ar.findByUsernameIgnoreCase(username);
-            
-            if(user != null)
-            {
-                return "redirect:/accounts/" + user.getUrlString();
-            }
+            return "redirect:/accounts/" + user.getUrlString();
         }
         
         return "index";
@@ -71,20 +68,17 @@ public class AccountController {
         
         model.addAttribute("account", account);
         
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Account user = as.getLoggedInAccount();
+        model.addAttribute("loggedInUser", user);
         
-        if(auth != null)
+        if(user != null)
         {
-            String username = auth.getName();        
-            Account user = ar.findByUsernameIgnoreCase(username);
-
-            model.addAttribute("loggedInUser", user);
             model.addAttribute("follower", fr.getByFollowingAccountAndFollowedAccount(user, account));
+        }
             
-            if(user == account)
-            {
-                model.addAttribute("myHomePage", true);
-            }
+        if(user == account)
+        {
+            model.addAttribute("myHomePage", true);
         }
         
         model.addAttribute("numFollowers", fr.countByFollowedAccount(account));        
@@ -112,38 +106,33 @@ public class AccountController {
     public String toggleFollowing(@PathVariable Long id, Model model, HttpServletRequest request)
     {
         Account followedAccount = ar.findById(id).get();
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Account followingAccount = as.getLoggedInAccount();
         
-        if(auth == null || followedAccount == null)
+        if(followingAccount == null || followedAccount == null)
         {
             String referer = request.getHeader("Referer");
             return "redirect:"+ referer;
         }
         
-        String username = auth.getName();        
-        Account followingAccount = ar.findByUsernameIgnoreCase(username);
+        fs.toggleFollowing(followingAccount, followedAccount);
         
-        if(followingAccount == null)
+        String referer = request.getHeader("Referer");
+        return "redirect:"+ referer;
+    }
+    
+    @PostMapping("/accounts/{id}/toggleBlock")
+    public String toggleBlock(@PathVariable Long id, Model model, HttpServletRequest request)
+    {
+        Account blockedAccount = ar.findById(id).get();
+        Account blockingAccount = as.getLoggedInAccount();
+        
+        if(blockedAccount == null || blockingAccount == null)
         {
             String referer = request.getHeader("Referer");
             return "redirect:"+ referer;
         }
         
-        Follower follower = fr.getByFollowingAccountAndFollowedAccount(followingAccount, followedAccount);
-
-        if(follower != null)
-        {
-            fr.delete(follower);
-            follower = null;
-        }
-        else
-        {
-            follower = new Follower();
-            follower.setFollowedAccount(followedAccount);
-            follower.setFollowingAccount(followingAccount);
-            follower.setCreatedOn(new Date());
-            fr.save(follower);
-        }
+        bs.toggleBlock(blockedAccount, blockingAccount);
         
         String referer = request.getHeader("Referer");
         return "redirect:"+ referer;
