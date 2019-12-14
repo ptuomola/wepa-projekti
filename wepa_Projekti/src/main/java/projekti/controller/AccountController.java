@@ -6,6 +6,7 @@
 package projekti.controller;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -60,6 +61,7 @@ public class AccountController {
         return "index";
     }
     
+    @Transactional
     @GetMapping("/accounts/{urlSuffix}")
     public String getAccountPage(@PathVariable String urlSuffix, Model model)
     {
