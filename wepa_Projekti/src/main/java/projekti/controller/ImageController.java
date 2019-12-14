@@ -63,7 +63,7 @@ public class ImageController {
     @Autowired
     private LikeService ls;
     
-    
+    @Transactional
     @PostMapping("/images")
     public String saveImage(Model model, @RequestParam String description, @RequestParam("file") MultipartFile file) throws IOException {
         String uploadError = null;
