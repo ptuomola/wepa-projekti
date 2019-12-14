@@ -36,7 +36,7 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 public class Image extends AbstractPersistable<Long> {
     
     @Lob
-    @Basic(fetch = FetchType.LAZY)
+    @Basic(fetch = FetchType.EAGER)
     private byte[] content;
     
     private String mediaType;
@@ -47,7 +47,7 @@ public class Image extends AbstractPersistable<Long> {
     
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "account_id", nullable = false)
-    @EqualsAndHashCode.Exclude 
+    @EqualsAndHashCode.Exclude
     private Account owner; 
     
     private int numLikes;
