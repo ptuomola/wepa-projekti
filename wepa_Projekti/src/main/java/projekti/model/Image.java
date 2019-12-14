@@ -22,6 +22,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.Type;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
 /**
@@ -37,6 +38,7 @@ public class Image extends AbstractPersistable<Long> {
     
     @Lob
     @Basic(fetch = FetchType.EAGER)
+    @Type(type = "org.hibernate.type.ImageType")
     private byte[] content;
     
     private String mediaType;
