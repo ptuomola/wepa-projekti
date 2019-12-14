@@ -159,7 +159,6 @@ public class ImageController {
     }
         
     @GetMapping("/images")
-    @Transactional
     public String getImages(Model model)
     {
         Account owner = as.getLoggedInAccount();
@@ -172,7 +171,6 @@ public class ImageController {
     }
     
     @GetMapping("/images/{id}/content")
-    @Transactional
     public ResponseEntity<byte[]> getImage(@PathVariable Long id)
     {
         Account owner = as.getLoggedInAccount();
