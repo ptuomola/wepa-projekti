@@ -21,7 +21,7 @@
                         <input type="file" class="form-control-file" id="file" name="file">
                     </div>
                     <div class="col">
-                        <input type="string" class="form-control" placeholder="Description" name="description"/> 
+                        <input type="string" maxlength="255" class="form-control" placeholder="Description" name="description" id='description'/> 
                     </div>
                     <div class="col">
                         <input class="btn btn-primary" type="submit" value="Upload"/>
@@ -32,10 +32,10 @@
             <hr>
         </div>
         <div th:if="${myGallery}">
-            <h4>My image gallery (<span th:text="${count}">count</span> images)</h4>
+            <h4>My image gallery (<span th:text="${count}  + ' images)'">count</span></h4>
         </div>
         <div th:if="${myGallery} == null">
-            <h4><span th:text="'@' + ${owner.username}"></span>'s image gallery (<span th:text="${count}">count</span> images)</h4>
+            <h4><span th:text="'@' + ${owner.username}"></span>'s image gallery (<span th:text="${count} + ' images)'"></span></h4>
         </div>
         <div>
             <th:block th:each="image : ${images}">
@@ -60,7 +60,7 @@
                             </li>
                             <li class="list-inline-item" th:if="${myGallery}">
                                 <form class="form-inline" th:action="@{/images/{id}/delete(id=${image.id})}" method="POST">
-                                    <input class="btn btn-danger" type="submit" value="Delete"/>
+                                    <input class="btn btn-danger" type="submit" id="delete" value="Delete"/>
                                 </form>
                             </li>
                             <li class="list-inline-item" th:if="${myGallery}">
@@ -121,7 +121,7 @@
                                     </th:block>
                                 </div>
                                 <div class="col-8">
-                                    <input class="form-control commentText" id="messageText" name="commentText" placeholder="Add a comment"/> 
+                                    <input class="form-control" maxlength="255" id="messageText" name="commentText" placeholder="Add a comment"/> 
                                 </div>
                                 <div class="col-3">
                                    <button type="submit" class="btn btn-primary btn-xs form-control"><i class="fa fa-send"></i> Post</button> 

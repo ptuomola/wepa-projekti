@@ -1,23 +1,17 @@
 body {
-            background-color: #eeeeee;
+    background-color: #eeeeee;
+}
+
+.jumbotron
+{            
+    background-image: url('/public/helena-lopes-e3OUQGT9bWU-unsplash.jpg');
+    background-size: cover;
+    padding-top: 3%;
+    padding-bottom: 40%;
 }
 
 .h7 {
     font-size: 0.8rem;
-}
-
-.gedf-wrapper {
-    margin-top: 0.97rem;
-}
-
-@media (min-width: 992px) {
-    .gedf-main {
-        padding-left: 4rem;
-        padding-right: 4rem;
-    }
-    .gedf-card {
-        margin-bottom: 2.77rem;
-    }
 }
 
 /**Reset Bootstrap*/
@@ -46,9 +40,4 @@ body {
 	border-top: 0;
 	margin-top: -0.344em;
 	margin-left: -0.687em;
-}
-
-.commentText {
-    display:flex;
-    flex-grow:1;
 }

@@ -6,8 +6,8 @@
 
     <body class='container'>
         <nav th:replace="fragments/layout :: nav"/>
-       
-        <div class="container-fluid gedf-wrapper">
+        <div class="py-1"></div>
+        <div class="container-fluid">
             <div class="row">
                 <div class="col-md-3">
                     <div class="card">
@@ -100,8 +100,8 @@
                         </ul>
                     </div>
                 </div>
-                <div class="col-md-9 gedf-main">
-                    <div class="card gedf-card" th:if="${myHomePage} == true">
+                <div class="col-md-9">
+                    <div class="card" th:if="${myHomePage} == true">
                         <div class='card-header'>
                             <ul class="nav nav-tabs card-header-tabs" id='myTab' role='tablist'>
                                 <li class="nav-item">
@@ -115,7 +115,7 @@
                                     <div class="tab-pane fade show active" id="posts" role="tabpanel" aria-labelledby="posts-tab">
                                         <div class="form-group">
                                             <label class="sr-only" for="message">post</label>
-                                            <textarea class="form-control" id="message" rows="3" placeholder="What are you thinking?" name="messageText"></textarea>
+                                            <textarea class="form-control" id="message" rows="3" maxlength="255" placeholder="What are you thinking?" name="messageText"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -129,14 +129,14 @@
                             </form>
                         </div>
                     </div>
-                    <div class="card gedf-card" th:if="${myHomePage} != true">
+                    <div class="card" th:if="${myHomePage} != true">
                         <div class='card-body'>
                             <div class="card-text h3" th:text="'Wall of @' + ${account.username} + ' (' + ${account.name} + ')'">this is someone's wall</div>
                         </div>
                     </div>
                     <div th:each="message : ${messages}">
                         <div class="py-2"></div>
-                        <div class="card gedf-card">
+                        <div class="card">
                             <div class='card-header'>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="d-flex justify-content-between align-items-center">
@@ -213,7 +213,7 @@
                                             </th:block>
                                         </div>
                                         <div class="col-8">
-                                           <input class="form-control commentText" id="messageText" name="commentText" placeholder="Add a comment"/> 
+                                           <input class="form-control commentText" maxlength="255" id="messageText" name="commentText" placeholder="Add a comment"/> 
                                         </div>
                                         <div class="col-3">
                                             <button type="submit" class="btn btn-primary btn-xs form-control"><i class="fa fa-send"></i> Post</button> 
