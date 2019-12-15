@@ -91,7 +91,7 @@
                                     <a th:href="@{/images}" th:text="${numImages}" class="h5">123123</a>
                                 </th:block>
                                 <th:block th:if="${myHomePage} != true" sec:authorize="isAuthenticated()">
-                                    <a th:href="@{/accounts/{id}/images(id=${account.id})}" th:text="${numImages}" class="h5">123123</a>
+                                    <a th:href="@{/accounts/{id}/images(id=${account.id})}" th:text="${numImages}" id="accountgallery" class="h5">123123</a>
                                 </th:block>
                                 <th:block th:if="${myHomePage} != true" sec:authorize="!isAuthenticated()">
                                     <div th:text="${numImages}" class="h5">123123</div>
@@ -123,7 +123,7 @@
                                     <div>
                                     </div>
                                     <div class="btn-group">
-                                        <button type="submit" class="btn btn-primary">Post</button>
+                                        <button type="submit" id="postbutton" class="btn btn-primary">Post</button>
                                     </div>
                                 </div>
                             </form>
@@ -165,7 +165,7 @@
                             <div class="card-footer">
                                 <form sec:authorize="isAuthenticated()" class="form-inline" th:action="@{/messages/{id}/toggleLiking(id=${message.id})}" method="POST">
                                     <div class="form-group">
-                                        <button type="submit" class="btn btn-primary btn-xs"><i class="fa fa-thumbs-o-up"></i> Toggle Like</button> 
+                                        <button type="submit" id="likebutton" class="btn btn-primary btn-xs"><i class="fa fa-thumbs-o-up"></i> Toggle Like</button> 
                                     </div>
                                     <div class="ml-auto">
                                         <label class="text-muted" th:text="${message.numLikes}+' likes - ' + ${#lists.size(message.comments)} + ' comments'"</label>
@@ -213,10 +213,10 @@
                                             </th:block>
                                         </div>
                                         <div class="col-8">
-                                           <input class="form-control commentText" maxlength="255" id="messageText" name="commentText" placeholder="Add a comment"/> 
+                                           <input class="form-control" maxlength="255" id="commentText" name="commentText" placeholder="Add a comment"/> 
                                         </div>
                                         <div class="col-3">
-                                            <button type="submit" class="btn btn-primary btn-xs form-control"><i class="fa fa-send"></i> Post</button> 
+                                            <button type="submit" id="postComment" class="btn btn-primary btn-xs form-control"><i class="fa fa-send"></i> Post</button> 
                                         </div>
                                     </div>
                                 </form>

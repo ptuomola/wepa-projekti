@@ -5,7 +5,10 @@
  */
 package projekti;
 
-import org.fluentlenium.core.annotation.Page;
+import org.fluentlenium.core.FluentPage;
+import org.fluentlenium.core.annotation.PageUrl;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -13,6 +16,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.runner.RunWith;
+import org.openqa.selenium.By;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
@@ -23,38 +27,15 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @author ptuomola
  */
 
-@ActiveProfiles("test")
-@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class BaseTest extends org.fluentlenium.adapter.junit.FluentTest {
+@PageUrl("/")
+public class WallPage extends FluentPage {
     
-    @LocalServerPort
-    private Integer port;
-    
-    public BaseTest() {
+    public void isAt() {
+        assertTrue(pageSource().contains("Your wall"));
     }
     
-    @BeforeClass
-    public static void setUpClass() {
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-    }
-    
-    @Before
-    public void setUp() {
-        setBaseUrl("http://localhost:" + port);
-    }
-    
-    @After
-    public void tearDown() {
-    }
-    
-    @Test
-    public void baseTest()
-    {
+    public void postWall(String message) {
+        find("#message").fill().with(message);
+        find("#postbutton").first().click();
     }
 }
-
-

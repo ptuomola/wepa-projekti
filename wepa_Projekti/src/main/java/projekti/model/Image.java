@@ -17,6 +17,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -55,6 +56,7 @@ public class Image extends AbstractPersistable<Long> {
     private int numLikes;
     
     @OneToMany(mappedBy = "commentedImage", cascade = CascadeType.REMOVE)
+    @OrderBy("commentTime ASC")
     @EqualsAndHashCode.Exclude 
     Set<Comment> comments; 
 }

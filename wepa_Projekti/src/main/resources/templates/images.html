@@ -54,7 +54,7 @@
                             <li class="list-inline-item">
                                 <form class="form-inline" th:action="@{/images/{id}/toggleLiking(id=${image.id})}" method="POST">
                                     <div class="form-group">
-                                        <button type="submit" class="btn btn-primary btn-xs"><i class="fa fa-thumbs-o-up"></i> Toggle Like</button> 
+                                        <button type="submit" id="likebutton" class="btn btn-primary btn-xs"><i class="fa fa-thumbs-o-up"></i> Toggle Like</button> 
                                     </div>
                                 </form>
                             </li>
@@ -121,10 +121,10 @@
                                     </th:block>
                                 </div>
                                 <div class="col-8">
-                                    <input class="form-control" maxlength="255" id="messageText" name="commentText" placeholder="Add a comment"/> 
+                                    <input class="form-control" maxlength="255" id="commentText" name="commentText" placeholder="Add a comment"/> 
                                 </div>
                                 <div class="col-3">
-                                   <button type="submit" class="btn btn-primary btn-xs form-control"><i class="fa fa-send"></i> Post</button> 
+                                   <button type="submit" id="postComment" class="btn btn-primary btn-xs form-control"><i class="fa fa-send"></i> Post</button> 
                                 </div>
                             </div>
                         </form>

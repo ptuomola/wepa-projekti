@@ -39,6 +39,9 @@ public class ImageTest extends BaseTest {
     @Page
     ImagePage ip; 
     
+    @Page
+    SearchPage sp;
+    
     public ImageTest() {
     }
     
@@ -141,15 +144,154 @@ public class ImageTest extends BaseTest {
             assertTrue(pageSource().contains("Image " + i));      
         }
         
-        find(By.xpath("//button[value()='Set as profile image']")).first().click();
+        find(By.xpath("//input[@value='Set as profile image']")).first().click();
         assertTrue(pageSource().contains("Unset as profile image"));
     
         String image = $("img").first().attribute("src");
-        System.out.println("image: " + image);
         goTo("/");
-        assertTrue(pageSource().contains(image));
+        String imageOnWall = $("img").first().attribute("src");
+        assertTrue(imageOnWall.equals(image));
+    }
+    
+    @Test
+    public void canViewImageGalleries()
+    {
+        String username = "imageuser6";
+        String password = "Imageuser6";
+        
+        rp.go();
+        rp.registerUser(username, password);
+        lp.isAt();
+        lp.loginUser(username, password);
+        assertTrue(pageSource().contains("Your wall"));
+        ip.go();
+        assertTrue(pageSource().contains("0 images"));
+        
+        for(int i = 1; i <= 3; i++)
+        {
+            ip.uploadFile("./test-image.jpeg", "Image " + i);
+            ip.isAt();
+            assertTrue(pageSource().contains("" + i + " images"));  
+            assertTrue(pageSource().contains("Image " + i));      
+        }
+
+        goTo("/logoff");
+        username = "imageuser7";
+        password = "Imageuser7";
+        
+        rp.go();
+        rp.registerUser(username, password);
+        lp.isAt();
+        lp.loginUser(username, password);
+        assertTrue(pageSource().contains("Your wall"));
+        ip.go();
+        assertTrue(pageSource().contains("0 images"));
+        
+        sp.go();
+        sp.searchUser("imageuser6");
+        
+        find(By.linkText("imageuser6")).first().click();
+        assertTrue(pageSource().contains("@imageuser6"));
+        find("#accountgallery").first().click();
+        
+        assertTrue(pageSource().contains("3 images"));  
+        assertTrue(pageSource().contains("@imageuser6"));
+        assertTrue(pageSource().contains("'s image gallery"));
+    }
+    
+    @Test
+    public void canLikeImages()
+    {
+        String username = "imageuser8";
+        String password = "Imageuser8";
+        
+        rp.go();
+        rp.registerUser(username, password);
+        lp.isAt();
+        lp.loginUser(username, password);
+        assertTrue(pageSource().contains("Your wall"));
+        ip.go();
+        assertTrue(pageSource().contains("0 images"));
+ 
+        ip.uploadFile("./test-image.jpeg", "Image 1");
+        ip.isAt();
+        assertTrue(pageSource().contains("1 images"));  
+        assertTrue(pageSource().contains("Image 1"));   
+        
+        assertTrue(pageSource().contains("0 likes"));
+        
+        find("#likebutton").first().click();
+        assertTrue(pageSource().contains("1 likes"));
+        
+        find("#likebutton").first().click();
+        assertTrue(pageSource().contains("0 likes"));
+    }
+    
+    @Test
+    public void canCommentImages()
+    {
+        String username = "imageuser9";
+        String password = "Imageuser9";
+        
+        rp.go();
+        rp.registerUser(username, password);
+        lp.isAt();
+        lp.loginUser(username, password);
+        assertTrue(pageSource().contains("Your wall"));
+        ip.go();
+        assertTrue(pageSource().contains("0 images"));
+ 
+        ip.uploadFile("./test-image.jpeg", "Image 1");
+        ip.isAt();
+        assertTrue(pageSource().contains("1 images"));  
+        assertTrue(pageSource().contains("Image 1"));   
+        
+        assertTrue(pageSource().contains("0 comments"));
+     
+        find("#commentText").fill().with("This is a test comment");
+        find("#postComment").first().click();
+        
+        assertTrue(pageSource().contains("1 comments"));
+        assertTrue(pageSource().contains("This is a test comment"));
     }
 
+    @Test
+    public void max10Comments()
+    {
+        String username = "imageuser10";
+        String password = "Imageuser10";
+        
+        rp.go();
+        rp.registerUser(username, password);
+        lp.isAt();
+        lp.loginUser(username, password);
+        assertTrue(pageSource().contains("Your wall"));
+        ip.go();
+        assertTrue(pageSource().contains("0 images"));
+ 
+        ip.uploadFile("./test-image.jpeg", "Image 1");
+        ip.isAt();
+        assertTrue(pageSource().contains("1 images"));  
+        assertTrue(pageSource().contains("Image 1"));   
+        
+        assertTrue(pageSource().contains("0 comments"));
+     
+        for(int i = 1; i <= 10; i++)
+        {
+            find("#commentText").fill().with("This is a test comment #" + i + ".");
+            find("#postComment").first().click();
+
+            assertTrue(pageSource().contains("" + i + " comments"));
+            assertTrue(pageSource().contains("This is a test comment #" + i + "."));
+        }
+        
+        find("#commentText").fill().with("This is a test comment #11.");
+        find("#postComment").first().click();
+
+        assertTrue(pageSource().contains("11 comments"));
+        assertTrue(pageSource().contains("Showing 10 most recent comments"));
+        assertFalse(pageSource().contains("This is a test comment #1."));
+    }
     
 }
 
