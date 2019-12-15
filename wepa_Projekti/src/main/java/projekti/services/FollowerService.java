@@ -23,8 +23,17 @@ public class FollowerService {
     @Autowired
     private FollowerRepository fr;
     
+    @Autowired 
+    private BlockService bs;
+    
     public void toggleFollowing(Account followingAccount, Account followedAccount)
     {
+        // Can't follow accounts who have blocked you or whom you have blocked
+        if(bs.isBlocked(followingAccount, followedAccount) || bs.isBlocked(followedAccount, followingAccount))
+        {
+            return;
+        }
+        
         Follower follower = fr.getByFollowingAccountAndFollowedAccount(followingAccount, followedAccount);
 
         if(follower != null)

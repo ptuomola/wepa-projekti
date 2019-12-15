@@ -5,6 +5,7 @@
  */
 package projekti.controller;
 
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import projekti.model.Account;
 import projekti.model.AccountRepository;
 import projekti.model.FollowerRepository;
+import projekti.model.Image;
+import projekti.model.ImageRepository;
 import projekti.model.MessageRepository;
 import projekti.services.AccountService;
 import projekti.services.BlockService;
@@ -38,6 +41,9 @@ public class AccountController {
     
     @Autowired
     private MessageRepository mr;
+    
+    @Autowired
+    private ImageRepository ir;
     
     @Autowired
     private AccountService as;
@@ -76,6 +82,8 @@ public class AccountController {
         if(user != null)
         {
             model.addAttribute("follower", fr.getByFollowingAccountAndFollowedAccount(user, account));
+            model.addAttribute("hasBlocked", bs.isBlocked(account, user));
+            model.addAttribute("haveBlocked", bs.isBlocked(user, account));
         }
             
         if(user == account)
@@ -85,6 +93,7 @@ public class AccountController {
         
         model.addAttribute("numFollowers", fr.countByFollowedAccount(account));        
         model.addAttribute("numFollowing", fr.countByFollowingAccount(account));
+        model.addAttribute("numImages", ir.countByOwner(account));
         
         model.addAttribute("messages", mr.getMessagesForDisplay(account));
         
@@ -138,5 +147,26 @@ public class AccountController {
         
         String referer = request.getHeader("Referer");
         return "redirect:"+ referer;
+    }
+    
+    @GetMapping("/accounts/{id}/images")
+    public String getImages(@PathVariable Long id, Model model)
+    {
+        Account owner = ar.getOne(id);
+        List<Image> images = ir.findByOwnerOrderByIdAsc(owner);
+        model.addAttribute("count", images.size());
+        model.addAttribute("images", images);
+        model.addAttribute("owner", owner);
+
+        Account user = as.getLoggedInAccount();
+        model.addAttribute("loggedInUser", user);
+        model.addAttribute("profileImage", user.getProfileImage());
+        
+        if(user != null)
+        {
+            model.addAttribute("follower", fr.getByFollowingAccountAndFollowedAccount(user, owner));
+        }
+        
+        return "images";
     }
 }

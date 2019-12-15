@@ -46,4 +46,9 @@ body {
 	border-top: 0;
 	margin-top: -0.344em;
 	margin-left: -0.687em;
-}  
+}
+
+.commentText {
+    display:flex;
+    flex-grow:1;
+}

@@ -50,4 +50,10 @@ public class BlockService {
             br.save(block);
         }
     }
+
+    public boolean isBlocked(Account blockingAccount, Account blockedAccount) 
+    {
+        if(br.findByBlockedAccountAndBlockingAccount(blockedAccount, blockingAccount) != null) return true;
+        return false;
+    }
 }

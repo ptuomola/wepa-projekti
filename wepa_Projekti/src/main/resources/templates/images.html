@@ -7,119 +7,130 @@
     <body class='container'>
         
         <nav th:replace="fragments/layout :: nav"/>
+        <p></p>  
         
-        <p></p>
-        <h5>Upload new images</h5>
-        
-        <form th:action="@{/images}" autocomplete="off" method="POST" enctype="multipart/form-data">
-            <th:block th:if="${uploadError} != null">
-                <div class="alert alert-danger" th:text="${uploadError}"/>
-            </th:block>
-            <div class='form-inline'>
-                <div class="col">
-                    <input type="file" class="form-control-file" id="file" name="file">
+        <div th:if="${myGallery}">
+            <h5>Upload new images</h5>
+
+            <form th:action="@{/images}" autocomplete="off" method="POST" enctype="multipart/form-data">
+                <th:block th:if="${uploadError} != null">
+                    <div class="alert alert-danger" th:text="${uploadError}"/>
+                </th:block>
+                <div class='form-inline'>
+                    <div class="col">
+                        <input type="file" class="form-control-file" id="file" name="file">
+                    </div>
+                    <div class="col">
+                        <input type="string" class="form-control" placeholder="Description" name="description"/> 
+                    </div>
+                    <div class="col">
+                        <input class="btn btn-primary" type="submit" value="Upload"/>
+                    </div>
                 </div>
-                <div class="col">
-                    <input type="string" class="form-control" placeholder="Description" name="description"/> 
-                </div>
-                <div class="col">
-                    <input class="btn btn-primary" type="submit" value="Upload"/>
-                </div>
-            </div>
-        </form>
-        <p></p>
-        <hr>
-        <h4>My image gallery (<span th:text="${count}">count</span> images)</h4>
-        
-        <div class="col-sm-12">
+            </form>
+            <p></p>
+            <hr>
+        </div>
+        <div th:if="${myGallery}">
+            <h4>My image gallery (<span th:text="${count}">count</span> images)</h4>
+        </div>
+        <div th:if="${myGallery} == null">
+            <h4><span th:text="'@' + ${owner.username}"></span>'s image gallery (<span th:text="${count}">count</span> images)</h4>
+        </div>
+        <div>
             <th:block th:each="image : ${images}">
+                <div class="py-2"></div>
                 <div class="card">
+                    <div class="card-header"> 
+                        <div class="card-text lead">
+                             <span th:text="${image.description}"/>
+                        </div>
+                    </div>
                     <div class="card-body">
                        <img style="width:100%" th:src="@{/images/{id}/content(id=${image.id})}"/>
                     </div>
-                </div>
-                <div class="card-footer"> 
-                    <div class="card-text lead">
-                         <span th:text="${image.description}"/>
-                    </div>
-                </div>
-                <div class="card-footer">
-                    <ul class="list-inline">
-                        <li class="list-inline-item">
-                            <form class="form-inline" th:action="@{/images/{id}/toggleLiking(id=${image.id})}" method="POST">
-                                <div class="form-group">
-                                    <button type="submit" class="btn btn-primary btn-xs"><i class="fa fa-thumbs-o-up"></i> Toggle Like</button> 
-                                </div>
-                            </form>
-                        </li>
-                        <li class="list-inline-item">
-                            <form class="form-inline" th:action="@{/images/{id}/delete(id=${image.id})}" method="POST">
-                                <input class="btn btn-danger" type="submit" value="Delete"/>
-                            </form>
-                        </li>
-                        <li class="list-inline-item">
-                            <form  class="form-inline" th:action="@{/images/{id}/toggleProfileImage(id=${image.id})}" method="POST">
-                                <th:block th:if="${image} == ${profileImage}">
-                                    <input class="btn btn-primary" type="submit" value="Unset as profile image"/>
-                                </th:block>
-                                <th:block th:if="${image} != ${profileImage}">
-                                    <input class="btn btn-outline-primary" type="submit" value="Set as profile image"/>
-                                </th:block>
-                            </form>
-                        </li>
-                        <li class="list-inline-item">
-                            <div class="ml-auto">
-                                <label class="text-muted" th:text="${image.numLikes}+' likes - ' + ${#lists.size(image.comments)} + ' comments'"</label>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-                <div class="card-footer" th:if="${image.comments} != null">
-                    <div th:if="${#lists.size(image.comments)} > 10" class="card-text">
-                        <p class="lead">Showing 10 most recent comments</p>
-                    </div>
-                    <div th:if="${#lists.size(image.comments)} <= 10" class="card-text">
-                        <p class="lead">Comments</p>
-                    </div>
-                    <div th:each="comment, iterStat : ${image.comments}" th:if="${iterStat.index >= iterStat.size-10}">
-                        <div class="row card-text">
-                            <div class="col col-sm-1">
-                                <th:block th:if="${comment.commentingAccount.profileImage} != null">
-                                    <img class="img-circle img-sm" width="30" th:src="@{/images/{id}/content(id=${comment.commentingAccount.profileImage.id})}" alt="">
-                                </th:block>
-                                <th:block th:if="${comment.commentingAccount.profileImage} == null">
-                                    <img class="img-circle img-sm" width="30" src="https://img.icons8.com/office/36/000000/person-male.png" alt="">
-                                </th:block>
-                            </div>
-                            <div class="col col-sm-11">
-                                <div class="speech-bubble"> 
-                                    <div class="card-text">
-                                        <strong><span th:text="'@' + ${comment.commentingAccount.username} + ' (' + ${comment.commentingAccount.name} + '): '">userName (name)</span></strong><span th:text="${comment.commentText}">commentText</span>
+                    <div class="card-footer">
+                        <ul class="list-inline">
+                            <li class="list-inline-item">
+                                <form class="form-inline" th:action="@{/images/{id}/toggleLiking(id=${image.id})}" method="POST">
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-primary btn-xs"><i class="fa fa-thumbs-o-up"></i> Toggle Like</button> 
                                     </div>
+                                </form>
+                            </li>
+                            <li class="list-inline-item" th:if="${myGallery}">
+                                <form class="form-inline" th:action="@{/images/{id}/delete(id=${image.id})}" method="POST">
+                                    <input class="btn btn-danger" type="submit" value="Delete"/>
+                                </form>
+                            </li>
+                            <li class="list-inline-item" th:if="${myGallery}">
+                                <form  class="form-inline" th:action="@{/images/{id}/toggleProfileImage(id=${image.id})}" method="POST">
+                                    <th:block th:if="${image} == ${profileImage}">
+                                        <input class="btn btn-primary" type="submit" value="Unset as profile image"/>
+                                    </th:block>
+                                    <th:block th:if="${image} != ${profileImage}">
+                                        <input class="btn btn-outline-primary" type="submit" value="Set as profile image"/>
+                                    </th:block>
+                                </form>
+                            </li>
+                            <li class="list-inline-item pull-right">
+                                <div class="">
+                                    <label class="text-muted" th:text="${image.numLikes}+' likes - ' + ${#lists.size(image.comments)} + ' comments'"</label>
                                 </div>
-                                <span class="small text-muted pull-right" th:text="${#dates.format(comment.commentTime, 'dd-MM-yyyy HH:mm')}">commentTime</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-footer" th:if="${image.comments} != null">
+                        <div th:if="${#lists.size(image.comments)} > 10" class="card-text">
+                            <p class="lead">Showing 10 most recent comments</p>
+                        </div>
+                        <div th:if="${#lists.size(image.comments)} <= 10" class="card-text">
+                            <p class="lead">Comments</p>
+                        </div>
+                        <div th:each="comment, iterStat : ${image.comments}" th:if="${iterStat.index >= iterStat.size-10}">
+                            <div class="row">
+                                <div class="col-1">
+                                    <th:block th:if="${comment.commentingAccount.profileImage} != null">
+                                        <img class="img-circle img-sm" width="30" th:src="@{/images/{id}/content(id=${comment.commentingAccount.profileImage.id})}" alt="">
+                                    </th:block>
+                                    <th:block th:if="${comment.commentingAccount.profileImage} == null">
+                                        <img class="img-circle img-sm" width="30" src="https://img.icons8.com/office/36/000000/person-male.png" alt="">
+                                    </th:block>
+                                </div>
+                                <div class="col-11">
+                                    <div class="speech-bubble"> 
+                                        <div class="card-text">
+                                            <strong><span th:text="'@' + ${comment.commentingAccount.username} + ' (' + ${comment.commentingAccount.name} + '): '">userName (name)</span></strong><span th:text="${comment.commentText}">commentText</span>
+                                        </div>
+                                    </div>
+                                    <span class="small text-muted pull-right" th:text="${#dates.format(comment.commentTime, 'dd-MM-yyyy HH:mm')}">commentTime</span>
+                                </div>
+                                <div class="py-3"></div>
                             </div>
-                            <div class="row py-3"></div>
                         </div>
                     </div>
+                    <div class="card-footer" th:if="${follower != null || myGallery != null}" sec:authorize="isAuthenticated()">
+                        <form th:action="@{/images/{id}/comment(id=${image.id})}" autocomplete="off" method="POST" class="form">
+                            <div class="form-group row">
+                                <div class="col-1">
+                                    <th:block th:if="${profileImage} != null">
+                                        <img class="img-circle img-sm" width="30" th:src="@{/images/{id}/content(id=${profileImage.id})}" alt="">
+                                    </th:block>
+                                    <th:block th:if="${profileImage} == null">
+                                        <img class="img-circle img-sm" width="30" src="https://img.icons8.com/office/36/000000/person-male.png" alt="">
+                                    </th:block>
+                                </div>
+                                <div class="col-8">
+                                    <input class="form-control commentText" id="messageText" name="commentText" placeholder="Add a comment"/> 
+                                </div>
+                                <div class="col-3">
+                                   <button type="submit" class="btn btn-primary btn-xs form-control"><i class="fa fa-send"></i> Post</button> 
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                <div class="card-footer">
-                    <form th:action="@{/images/{id}/comment(id=${image.id})}" autocomplete="off" method="POST" class="form-inline">
-                        <div class="form-group">
-                            <th:block th:if="${profileImage} != null">
-                                <img class="img-circle img-sm" width="30" th:src="@{/images/{id}/content(id=${profileImage.id})}" alt="">
-                            </th:block>
-                            <th:block th:if="${profileImage} == null">
-                                <img class="img-circle img-sm" width="30" src="https://img.icons8.com/office/36/000000/person-male.png" alt="">
-                            </th:block>
-                            <input class="form-control" id="messageText" name="commentText" placeholder="Add a comment"/> 
-                        </div>
-                        <div class="ml-auto form-group">
-                            <button type="submit" class="btn btn-primary btn-xs"><i class="fa fa-send"></i> Post</button> 
-                        </div>
-                </div>
-            </div>
-        </th:block>
+            </th:block>
         </div>
         
         <footer th:replace="fragments/layout :: footer"/>

@@ -13,6 +13,7 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -41,6 +42,10 @@ public class Account extends AbstractPersistable<Long> {
     @NotEmpty
     @Size(min = 3, max = 256)
     private String password;
+    
+    @Transient
+    @Size(min = 3, max = 256)
+    private String passwordConfirm;
 
     @NotEmpty
     @Size(min = 3, max = 50)

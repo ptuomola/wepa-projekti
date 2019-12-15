@@ -25,22 +25,41 @@
                             
                             <div class="py-2"></div>
                             
-                            <th:block th:if="${myHomePage} != true">
-                                <form class="form-inline" th:action="@{/accounts/{id}/toggleFollowing(id=${account.id})}" method="POST">
-                                    <th:block th:if="${follower} == null">
-                                        <input class="btn btn-primary" type="submit" value="Start following"/>
-                                    </th:block>
-                                    <th:block th:if="${follower} != null">
-                                        <p class="text-muted">
-                                        Following user since <span th:text="${#dates.format(follower.createdOn, 'dd-MM-yyyy HH:mm')}"/>
-                                        &nbsp;&nbsp;&nbsp;
-                                        </p>
-                                        <div>
-                                            <input class="btn btn-outline-primary" type="submit" value="Stop following"/>
-                                        </div>
-                                    
-                                    </th:block>
-                                </form>
+                            <th:block th:if="${myHomePage} != true" sec:authorize="isAuthenticated()">
+                                <th:block th:if="${hasBlocked}">
+                                    <button class="btn-danger">This user has blocked you</button>                                    
+                                </th:block>
+                                <th:block th:if="${haveBlocked}">
+                                    <form class="form-inline" th:action="@{/accounts/{id}/toggleBlock(id=${account.id})}" method="POST">
+                                        <input class="btn btn-danger" type="submit" value="Unblock"/>
+                                    </form>
+                                </th:block>
+                                <div th:if="${!hasBlocked && !haveBlocked}">
+                                    <form class="form" th:action="@{/accounts/{id}/toggleFollowing(id=${account.id})}" method="POST">
+                                        <th:block th:if="${follower} == null">
+                                            <div>
+                                                <input class="btn btn-primary" type="submit" value="Start following"/>
+                                            </div>
+                                        </th:block>
+                                        <th:block th:if="${follower} != null">
+                                            <div>  
+                                            <p class="text-muted small">
+                                            Following user since <span th:text="${#dates.format(follower.createdOn, 'dd-MM-yyyy HH:mm')}"/>
+                                            &nbsp;&nbsp;&nbsp;
+                                            </p>
+                                            </div>
+                                            <div>
+                                                <input class="btn btn-outline-primary" type="submit" value="Stop following"/>
+                                            </div>
+                                        </th:block>
+                                    </form>
+                                    <div class="py-1"></div>
+                                    <div>    
+                                        <form class="form-inline" th:action="@{/accounts/{id}/toggleBlock(id=${account.id})}" method="POST">
+                                            <input class="btn btn-danger" type="submit" value="Block"/>
+                                        </form>
+                                    </div>
+                                </div>
                             </th:block>
                         </div>
                         
@@ -64,6 +83,18 @@
                                 </th:block>
                                 <th:block th:if="${myHomePage} != true">
                                     <div th:text="${numFollowing}" class="h5">123123</div>
+                                </th:block>
+                            </li>                           
+                            <li class='list-group-item'>
+                                <div class="h6 text-muted">Image gallery</div>
+                                <th:block th:if="${myHomePage} == true">
+                                    <a th:href="@{/images}" th:text="${numImages}" class="h5">123123</a>
+                                </th:block>
+                                <th:block th:if="${myHomePage} != true" sec:authorize="isAuthenticated()">
+                                    <a th:href="@{/accounts/{id}/images(id=${account.id})}" th:text="${numImages}" class="h5">123123</a>
+                                </th:block>
+                                <th:block th:if="${myHomePage} != true" sec:authorize="!isAuthenticated()">
+                                    <div th:text="${numImages}" class="h5">123123</div>
                                 </th:block>
                             </li>
                         </ul>
@@ -132,7 +163,7 @@
                             </div>
 
                             <div class="card-footer">
-                                <form class="form-inline" th:action="@{/messages/{id}/toggleLiking(id=${message.id})}" method="POST">
+                                <form sec:authorize="isAuthenticated()" class="form-inline" th:action="@{/messages/{id}/toggleLiking(id=${message.id})}" method="POST">
                                     <div class="form-group">
                                         <button type="submit" class="btn btn-primary btn-xs"><i class="fa fa-thumbs-o-up"></i> Toggle Like</button> 
                                     </div>
@@ -149,16 +180,16 @@
                                     <p class="lead">Comments</p>
                                 </div>
                                 <div th:each="comment, iterStat : ${message.comments}" th:if="${iterStat.index >= iterStat.size-10}">
-                                    <div class="row card-text">
-                                        <div class="col col-sm-1">
+                                    <div class="row">
+                                        <div class="col-1">
                                             <th:block th:if="${comment.commentingAccount.profileImage} != null">
-                                                <img class="img-circle img-sm" width="30" th:src="@{/images/{id}/content(id=${message.sender.profileImage.id})}" alt="">
+                                                <img class="img-circle img-sm" width="30" th:src="@{/images/{id}/content(id=${comment.commentingAccount.profileImage.id})}" alt="">
                                             </th:block>
                                             <th:block th:if="${comment.commentingAccount.profileImage} == null">
                                                 <img class="img-circle img-sm" width="30" src="https://img.icons8.com/office/36/000000/person-male.png" alt="">
                                             </th:block>
                                         </div>
-                                        <div class="col col-sm-11">
+                                        <div class="col-11">
                                             <div class="speech-bubble"> 
                                                 <div class="card-text">
                                                     <strong><span th:text="'@' + ${comment.commentingAccount.username} + ' (' + ${comment.commentingAccount.name} + '): '">userName (name)</span></strong><span th:text="${comment.commentText}">commentText</span>
@@ -166,24 +197,29 @@
                                             </div>
                                             <span class="small text-muted pull-right" th:text="${#dates.format(comment.commentTime, 'dd-MM-yyyy HH:mm')}">commentTime</span>
                                         </div>
-                                        <div class="row py-3"></div>
+                                        <div class="py-3"></div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="card-footer">
-                                <form th:action="@{/messages/{id}/comment(id=${message.id})}" autocomplete="off" method="POST" class="form-inline">
-                                    <div class="form-group">
-                                        <th:block th:if="${loggedInUser.profileImage} != null">
-                                            <img class="img-circle img-sm" width="30" th:src="@{/images/{id}/content(id=${loggedInUser.profileImage.id})}" alt="">
-                                        </th:block>
-                                        <th:block th:if="${loggedInUser.profileImage} == null">
-                                            <img class="img-circle img-sm" width="30" src="https://img.icons8.com/office/36/000000/person-male.png" alt="">
-                                        </th:block>
-                                        <input class="form-control" id="messageText" name="commentText" placeholder="Add a comment"/> 
+                            <div class="card-footer" sec:authorize="isAuthenticated()" th:if="${follower != null || myHomePage != null}">
+                                <form th:action="@{/messages/{id}/comment(id=${message.id})}" autocomplete="off" method="POST" class="form">
+                                    <div class="form-group row">
+                                        <div class="col-1">
+                                            <th:block th:if="${loggedInUser.profileImage} != null">
+                                                <img class="img-circle img-sm" width="30" th:src="@{/images/{id}/content(id=${loggedInUser.profileImage.id})}" alt="">
+                                            </th:block>
+                                            <th:block th:if="${loggedInUser.profileImage} == null">
+                                                <img class="img-circle img-sm" width="30" src="https://img.icons8.com/office/36/000000/person-male.png" alt="">
+                                            </th:block>
+                                        </div>
+                                        <div class="col-8">
+                                           <input class="form-control commentText" id="messageText" name="commentText" placeholder="Add a comment"/> 
+                                        </div>
+                                        <div class="col-3">
+                                            <button type="submit" class="btn btn-primary btn-xs form-control"><i class="fa fa-send"></i> Post</button> 
+                                        </div>
                                     </div>
-                                    <div class="ml-auto form-group">
-                                        <button type="submit" class="btn btn-primary btn-xs"><i class="fa fa-send"></i> Post</button> 
-                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>

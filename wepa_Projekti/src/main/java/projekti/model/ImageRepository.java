@@ -17,4 +17,5 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
 
     @EntityGraph(attributePaths = {"comments"})
     public List<Image> findByOwnerOrderByIdAsc(Account owner);
+    public Long countByOwner(Account owner);
 }

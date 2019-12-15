@@ -15,11 +15,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,9 +28,7 @@ import projekti.model.Comment;
 import projekti.model.CommentRepository;
 import projekti.model.Image;
 import projekti.model.ImageRepository;
-import projekti.model.Like;
 import projekti.model.LikeRepository;
-import projekti.model.Message;
 import projekti.services.AccountService;
 import projekti.services.LikeService;
 
@@ -166,6 +161,7 @@ public class ImageController {
         model.addAttribute("count", images.size());
         model.addAttribute("images", images);
         model.addAttribute("profileImage", owner.getProfileImage());
+        model.addAttribute("myGallery", true);
         
         return "images";
     }
@@ -176,9 +172,6 @@ public class ImageController {
         Account owner = as.getLoggedInAccount();
         Image image = imageRepository.getOne(id);
         
-        if(!image.getOwner().equals(owner) && image.getOwner().getProfileImage() != image)
-            return new ResponseEntity<>(null, null, HttpStatus.NOT_FOUND);
-            
         final HttpHeaders headers = new HttpHeaders();
         
         headers.setContentType(MediaType.parseMediaType(image.getMediaType()));

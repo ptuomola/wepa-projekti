@@ -46,6 +46,37 @@ public class RegistrationController {
             return "register";
         }
         
+        String password = account.getPassword();
+
+        // Password validation rules
+        if(password != null)
+        {
+            if(password.length() < 8)
+            {
+                bindingResult.rejectValue("password", "error.password", "Password must be at least 8 characters long");
+            }
+        
+            if(!password.matches(".*[0-9].*"))
+            {
+                bindingResult.rejectValue("password", "error.password", "Password must contain at least one number");
+            }
+
+            if(!password.matches(".*[a-z].*"))
+            {
+                bindingResult.rejectValue("password", "error.password", "Password must contain at least one lowercase letter");
+            }
+
+            if(!password.matches(".*[A-Z].*"))
+            {
+                bindingResult.rejectValue("password", "error.password", "Password must contain at least one uppercase letter");
+            }
+        }
+        
+        if(!account.getPasswordConfirm().equals(account.getPassword()))
+        {
+            bindingResult.rejectValue("passwordConfirm", "error.passwordConfirm", "The passwords do not match");
+        }
+        
         if(ar.findByUsernameIgnoreCase(account.getUsername()) != null)
         {
             bindingResult.rejectValue("username", "error.username", "The selected username is already in use");
