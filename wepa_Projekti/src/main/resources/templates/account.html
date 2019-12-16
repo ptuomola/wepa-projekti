@@ -149,7 +149,7 @@
                                             </th:block>
                                         </div>
                                         <div class="ml-2">
-                                            <div class="h5 m-0" th:text="'@' + ${message.sender.username}"></div>
+                                            <a th:href="@{/accounts/{id}(id=${message.sender.urlString})}" class="h5 m-0" th:text="'@' + ${message.sender.username}"></a>
                                             <div class="h7 text-muted" th:text="${message.sender.name}"></div>
                                         </div>
                                     </div>
